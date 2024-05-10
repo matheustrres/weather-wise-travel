@@ -11,13 +11,15 @@
 	},
 	"scripts": {
 		"precommit": "lint-staged",
+		"prepush": "pnpm test",
 		"prestart": "rm -rf dist && pnpm build",
 		"build": "swc ./src --out-dir ./dist --strip-leading-paths",
 		"format": "prettier --write \"{src,tests}/**/*.ts\"",
 		"lint": "eslint \"{src,tests}/**/*.ts\" --fix",
 		"start": "node --env-file=.env .",
 		"start:dev": "dotenv -e .dev.env -- tsx watch src/index.ts",
-		"test": "glob -c \"node --import tsx --no-warnings --test\" \"./tests/**/*.{spec,test}.ts\""
+		"test": "glob -c \"node --import tsx --no-warnings --test\" \"./tests/**/*.{spec,test}.ts\"",
+		"prepare": "husky install"
 	},
 	"devDependencies": {
 		"@swc/cli": "^0.3.12",
@@ -37,7 +39,8 @@
 		"lint-staged": "^15.2.2",
 		"prettier": "^3.2.5",
 		"tsx": "^4.7.0",
-		"typescript": "^5.4.0"
+		"typescript": "^5.4.0",
+		"husky": "^8.0.0"
 	},
 	"keywords": [
 		"node.js",
