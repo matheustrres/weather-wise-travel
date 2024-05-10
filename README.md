@@ -9,7 +9,7 @@
   • <a href="#environment-variables">Environment variables</a><br>
   • <a href="#running-locally">Running locally</a><br>
   • <a href="#running-tests">Running tests</a><br>
-  • <a href="#used-tools">Used tools</a>
+  • <a href="#used-tools">Used tools</a><br>
   • <a href="#license">License</a>
 </p>
 
