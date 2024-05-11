@@ -15,10 +15,8 @@ type SetForecastInCacheOptions = {
 	ttlInSeconds: string;
 };
 
-const THREE_HOURS_IN_SECONDS = 10_800;
-
 export class VisualCrossingWeatherClient implements IWeatherClient {
-	static readonly #CACHE_TTL = THREE_HOURS_IN_SECONDS.toString();
+	static readonly #TTL_THREE_HOURS_IN_SECONDS = 10_800;
 
 	readonly #apiKey: string;
 
@@ -62,7 +60,8 @@ export class VisualCrossingWeatherClient implements IWeatherClient {
 
 		await this.#setForecastInCache({
 			forecast: normalizedForecast,
-			ttlInSeconds: VisualCrossingWeatherClient.#CACHE_TTL,
+			ttlInSeconds:
+				VisualCrossingWeatherClient.#TTL_THREE_HOURS_IN_SECONDS.toString(),
 		});
 
 		return normalizedForecast;
