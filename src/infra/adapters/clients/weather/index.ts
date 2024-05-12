@@ -1,123 +1,81 @@
 import { type WeatherForecast } from './types';
 
+import { ClientAdapter } from '../client-adapter';
+
 import { type IWeatherClient } from '@/core/ports/clients/weather';
 import { type ICacheProvider } from '@/core/ports/providers/cache';
-import { type Coordinates, type NormalizedForecast } from '@/core/types';
-import { HttpClient, type IHttpClient } from '@/shared/utils/http-client';
+import { type Coordinates, type NormalizedWeatherForecast } from '@/core/types';
+
+import { HttpClient } from '@/shared/utils/http-client';
 
 type WeatherClientOptions = {
 	apiKey: string;
 	cacheProvider: ICacheProvider;
 };
 
-type SetForecastInCacheOptions = {
-	forecast: NormalizedForecast;
-	ttlInSeconds: string;
-};
-
-export class VisualCrossingWeatherClient implements IWeatherClient {
+export class WeatherClient extends ClientAdapter implements IWeatherClient {
 	static readonly #TTL_THREE_HOURS_IN_SECONDS = 10_800;
 
-	readonly #apiKey: string;
-
-	readonly #httpClient: IHttpClient;
-	readonly #cacheProvider: ICacheProvider;
-
-	static #validate({ apiKey, cacheProvider }: WeatherClientOptions) {
-		if (!apiKey || typeof apiKey !== 'string') {
-			throw new TypeError(
-				'Argument {apiKey} is required and must be a string.',
-			);
-		}
-
-		if (!cacheProvider) {
-			throw new TypeError(
-				'Argument {cacheProvider} is required and must implement ICacheProvider.',
-			);
-		}
-	}
-
-	constructor(weatherClientOptions: WeatherClientOptions) {
-		VisualCrossingWeatherClient.#validate(weatherClientOptions);
-
-		this.#apiKey = weatherClientOptions.apiKey;
-		this.#cacheProvider = weatherClientOptions.cacheProvider;
-
-		this.#httpClient = new HttpClient(
+	constructor({ apiKey, cacheProvider }: WeatherClientOptions) {
+		const httpClient = new HttpClient(
 			'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services',
 		);
-	}
 
-	async getForecastByCoordinates(
-		coordinates: Coordinates,
-	): Promise<NormalizedForecast> {
-		const cachedForecast = await this.#getForecastFromCache(coordinates);
-
-		if (cachedForecast) return cachedForecast;
-
-		const normalizedForecast: NormalizedForecast =
-			await this.#getForecastFromAPI(coordinates);
-
-		await this.#setForecastInCache({
-			forecast: normalizedForecast,
-			ttlInSeconds:
-				VisualCrossingWeatherClient.#TTL_THREE_HOURS_IN_SECONDS.toString(),
+		super({
+			apiKey,
+			cacheProvider,
+			httpClient,
 		});
-
-		return normalizedForecast;
 	}
 
-	async #getForecastFromAPI({
-		lat,
-		lng,
-	}: Coordinates): Promise<NormalizedForecast> {
-		try {
-			const endpoint = `timeline/${lat},${lng}?key=${this.#apiKey}`;
+	async getWeatherForecastByCoordinates(
+		coordinates: Coordinates,
+	): Promise<NormalizedWeatherForecast> {
+		const weatherForecastCacheKey =
+			this.#getWeatherForecastCacheKey(coordinates);
 
-			const normalizedForecast =
-				await this.#httpClient.get<WeatherForecast>(endpoint);
+		const normalizedCachedWeatherForecast =
+			await this._fetchDataFromCache<NormalizedWeatherForecast>(
+				weatherForecastCacheKey,
+			);
 
-			return this.#normalizeForecast(normalizedForecast);
-		} catch (error) {
-			throw new Error((error as Error).message);
+		if (normalizedCachedWeatherForecast) {
+			return normalizedCachedWeatherForecast;
 		}
-	}
 
-	async #getForecastFromCache(
-		coordinates: Coordinates,
-	): Promise<NormalizedForecast | null> {
-		return this.#cacheProvider.get<NormalizedForecast>(
-			this.#getCoordsCacheKey(coordinates),
+		const weatherForecast = await this._fetchDataFromAPI<WeatherForecast>(
+			this.#getEndpoint(coordinates),
 		);
-	}
 
-	async #setForecastInCache({
-		forecast,
-		ttlInSeconds,
-	}: SetForecastInCacheOptions): Promise<void> {
-		const coordsCacheKey = this.#getCoordsCacheKey({
-			lat: forecast.lat,
-			lng: forecast.lng,
+		const normalizedWeatherForecast =
+			this.#normalizeWeatherForecast(weatherForecast);
+
+		await this._setDataInCache({
+			key: weatherForecastCacheKey,
+			ttlInSeconds: WeatherClient.#TTL_THREE_HOURS_IN_SECONDS.toString(),
+			value: normalizedWeatherForecast,
 		});
 
-		await this.#cacheProvider.set<NormalizedForecast>({
-			key: coordsCacheKey,
-			value: forecast,
-			ttlInSeconds,
-		});
+		return normalizedWeatherForecast;
 	}
 
-	#getCoordsCacheKey({ lat, lng }: Coordinates): string {
+	#getEndpoint({ lat, lng }: Coordinates) {
+		return `timeline/${lat},${lng}?key=${this._apiKey}`;
+	}
+
+	#getWeatherForecastCacheKey({ lat, lng }: Coordinates): string {
 		return `forecast/${lat}-${lng}`;
 	}
 
-	#normalizeForecast(forecast: WeatherForecast): NormalizedForecast {
+	#normalizeWeatherForecast(
+		weatherForecast: WeatherForecast,
+	): NormalizedWeatherForecast {
 		return {
-			lat: forecast.latitude,
-			lng: forecast.longitude,
-			timezone: forecast.timezone,
-			description: forecast.description,
-			days: forecast.days.map((day) => ({
+			lat: weatherForecast.latitude,
+			lng: weatherForecast.longitude,
+			timezone: weatherForecast.timezone,
+			description: weatherForecast.description,
+			days: weatherForecast.days.map((day) => ({
 				dateTime: day.datetime,
 				conditions: day.conditions,
 				description: day.description,
