@@ -1,6 +1,6 @@
 import { type Coordinates, type NormalizedWeatherForecast } from '@/core/types';
 
-export interface IWeatherClient {
+export interface IWeatherForecastClient {
 	getWeatherForecastByCoordinates(
 		coordinates: Coordinates,
 	): Promise<NormalizedWeatherForecast | null>;

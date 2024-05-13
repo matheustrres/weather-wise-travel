@@ -4,7 +4,7 @@ import { afterEach, describe, it } from 'node:test';
 import { type ICacheProvider } from '@/core/ports/providers/cache';
 import { type Coordinates, type NormalizedWeatherForecast } from '@/core/types';
 
-import { WeatherClient } from '@/infra/adapters/clients/weather';
+import { WeatherForecastClient } from '@/infra/adapters/clients/weather-forecast';
 
 import normalizedWeatherForecastResponseFixture from '#/data/fixtures/normalized_weather_forecast_response.json';
 import weatherForecastResponseFixture from '#/data/fixtures/weather_forecast_response.json';
@@ -17,7 +17,7 @@ import { makeInMemoCacheProvider } from '#/impl/in-memo/providers/cache';
 type SUT = {
 	cacheProvider: ICacheProvider;
 	httpClient: MockedHttpClient;
-	sut: WeatherClient;
+	sut: WeatherForecastClient;
 };
 
 function makeSUT(): SUT {
@@ -27,7 +27,7 @@ function makeSUT(): SUT {
 	return {
 		cacheProvider,
 		httpClient,
-		sut: new WeatherClient({
+		sut: new WeatherForecastClient({
 			apiKey: 'random_api_key',
 			cacheProvider,
 			httpClient,
@@ -35,7 +35,7 @@ function makeSUT(): SUT {
 	};
 }
 
-describe('WeatherClient', () => {
+describe('WeatherForecastClient', () => {
 	const { cacheProvider, httpClient, sut } = makeSUT();
 
 	afterEach(() => {
