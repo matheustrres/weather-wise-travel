@@ -27,7 +27,7 @@ export class GeocodingClient extends ClientAdapter implements IGeocodingClient {
 	}
 
 	async forwardGeocodingAddress(address: string): Promise<Coordinates | null> {
-		const geocodingAddressCacheKey = this.#getGeocodingAddressCacheKey(address);
+		const geocodingAddressCacheKey = this.getGeocodingAddressCacheKey(address);
 
 		const normalizedCachedGeocodingAddress =
 			await this._fetchDataFromCache<Coordinates>(geocodingAddressCacheKey);
@@ -59,7 +59,7 @@ export class GeocodingClient extends ClientAdapter implements IGeocodingClient {
 		return normalizedGeocodingAddress;
 	}
 
-	#getGeocodingAddressCacheKey(address: string) {
+	getGeocodingAddressCacheKey(address: string) {
 		return `geocoding/address:${encodeURIComponent(address)
 			.replace(/\s+/g, '_')
 			.toLowerCase()}`;
