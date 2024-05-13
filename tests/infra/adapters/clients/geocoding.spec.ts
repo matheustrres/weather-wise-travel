@@ -56,4 +56,15 @@ describe('GeocodingClient', () => {
 		deepStrictEqual(geocodingAddress, normalizedCachedGeocodingAddress);
 		strictEqual(httpClient.get.mock.callCount(), 0);
 	});
+
+	it('should return null if no geocoding address is found for given address', async () => {
+		const { httpClient, sut } = makeSUT();
+
+		httpClient.get.mock.mockImplementationOnce(() => null);
+
+		const geocodingAddress =
+			await sut.forwardGeocodingAddress('Général Leclerc');
+
+		deepStrictEqual(geocodingAddress, null);
+	});
 });
