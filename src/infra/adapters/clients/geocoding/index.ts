@@ -49,7 +49,7 @@ export class GeocodingClient extends ClientAdapter implements IGeocodingClient {
 			geocodingAddresses[0]!,
 		);
 
-		await this._setDataInCache({
+		await this._setDataInCache<Coordinates>({
 			key: geocodingAddressCacheKey,
 			ttlInSeconds:
 				GeocodingClient.#TTL_SEVENTY_TWO_HOURS_IN_SECONDS.toString(),
@@ -60,9 +60,7 @@ export class GeocodingClient extends ClientAdapter implements IGeocodingClient {
 	}
 
 	getGeocodingAddressCacheKey(address: string) {
-		return `geocoding/address:${encodeURIComponent(address)
-			.replace(/\s+/g, '_')
-			.toLowerCase()}`;
+		return `geocoding/address:${encodeURIComponent(address).toLowerCase()}`;
 	}
 
 	#getEndpoint({ api_key, q }: GeocodingQueryParams) {
