@@ -1,13 +1,17 @@
 import { deepStrictEqual, strictEqual } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { makeInMemoCacheProvider } from '#/impl/in-memo/providers/cache';
-import { type MockedHttpClient, mockedHttpClient } from '#/mocks/http-client';
-
 import { type ICacheProvider } from '@/core/ports/providers/cache';
 import { type Coordinates } from '@/core/types';
 
 import { GeocodingClient } from '@/infra/adapters/clients/geocoding';
+
+import geocodingAddressesResponseFixture from '#/data/fixtures/geocoding_addresses_response.json';
+import {
+	type MockedHttpClient,
+	mockedHttpClient,
+} from '#/data/mocks/http-client';
+import { makeInMemoCacheProvider } from '#/impl/in-memo/providers/cache';
 
 type SUT = {
 	cacheProvider: ICacheProvider;
@@ -66,5 +70,28 @@ describe('GeocodingClient', () => {
 			await sut.forwardGeocodingAddress('Général Leclerc');
 
 		deepStrictEqual(geocodingAddress, null);
+	});
+
+	it('should return a normalized geocoding address and add its value to cache', async () => {
+		const { cacheProvider, httpClient, sut } = makeSUT();
+
+		httpClient.get.mock.mockImplementationOnce(
+			() => geocodingAddressesResponseFixture,
+		);
+
+		const address = 'Rue des Boulets';
+
+		const normalizedGeocodingAddress =
+			await sut.forwardGeocodingAddress(address);
+
+		const cachedData = await cacheProvider.get(
+			sut.getGeocodingAddressCacheKey(address),
+		);
+
+		deepStrictEqual(normalizedGeocodingAddress, {
+			lat: Number(geocodingAddressesResponseFixture[0]!.lat),
+			lng: Number(geocodingAddressesResponseFixture[0]!.lon),
+		});
+		deepStrictEqual(cachedData, normalizedGeocodingAddress);
 	});
 });

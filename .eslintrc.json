@@ -31,7 +31,7 @@
 					"/^@/core/",
 					"/^@/infra/",
 					"/^@/shared/",
-					"/^@#/"
+					"/^#/"
 				],
 				"alphabetize": {
 					"order": "asc",
