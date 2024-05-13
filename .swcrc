@@ -5,20 +5,20 @@
 			"syntax": "typescript",
 			"tsx": false,
 			"dynamicImport": true,
-			"decorators": false,
+			"decorators": false
 		},
 		"target": "es2022",
 		"baseUrl": "./",
 		"loose": true,
 		"externalHelpers": true,
-		"keepClassNames": true,
+		"keepClassNames": true
 	},
 	"module": {
 		"type": "commonjs",
 		"strict": true,
 		"strictMode": true,
 		"noInterop": false,
-		"lazy": false,
+		"lazy": false
 	},
-	"minify": true,
+	"minify": true
 }
