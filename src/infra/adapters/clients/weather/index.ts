@@ -8,20 +8,24 @@ import {
 import { type IWeatherClient } from '@/core/ports/clients/weather';
 import { type Coordinates, type NormalizedWeatherForecast } from '@/core/types';
 
-import { HttpClient } from '@/shared/utils/http-client';
+import { HttpClient, type IHttpClient } from '@/shared/utils/http-client';
+
+type WeatherClientOptions = CommonClientAdapterOptions & {
+	httpClient?: IHttpClient;
+};
 
 export class WeatherClient extends ClientAdapter implements IWeatherClient {
 	static readonly #TTL_THREE_HOURS_IN_SECONDS = 10_800;
 
-	constructor({ apiKey, cacheProvider }: CommonClientAdapterOptions) {
-		const httpClient = new HttpClient(
-			'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services',
-		);
-
+	constructor({ apiKey, cacheProvider, httpClient }: WeatherClientOptions) {
 		super({
 			apiKey,
 			cacheProvider,
-			httpClient,
+			httpClient:
+				httpClient ||
+				new HttpClient(
+					'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services',
+				),
 		});
 	}
 

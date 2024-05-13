@@ -9,18 +9,20 @@ import { type IGeocodingClient } from '@/core/ports/clients/geocoding';
 import { type Coordinates } from '@/core/types';
 
 import { generateQueryParams } from '@/shared/utils/funcs/gen-query-params';
-import { HttpClient } from '@/shared/utils/http-client';
+import { HttpClient, type IHttpClient } from '@/shared/utils/http-client';
+
+type GeocodingClientOptions = CommonClientAdapterOptions & {
+	httpClient?: IHttpClient;
+};
 
 export class GeocodingClient extends ClientAdapter implements IGeocodingClient {
 	static readonly #TTL_SEVENTY_TWO_HOURS_IN_SECONDS = 259_200;
 
-	constructor({ apiKey, cacheProvider }: CommonClientAdapterOptions) {
-		const httpClient = new HttpClient('https://geocode.maps.co');
-
+	constructor({ apiKey, cacheProvider, httpClient }: GeocodingClientOptions) {
 		super({
 			apiKey,
 			cacheProvider,
-			httpClient,
+			httpClient: httpClient || new HttpClient('https://geocode.maps.co'),
 		});
 	}
 
