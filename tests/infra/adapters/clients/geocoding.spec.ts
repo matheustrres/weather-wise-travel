@@ -74,6 +74,7 @@ describe('GeocodingClient', () => {
 
 		deepStrictEqual(geocodingAddress, null);
 		strictEqual(httpClient.get.mock.callCount(), 1);
+		deepStrictEqual(httpClient.get.mock.calls[0]!.result, null);
 	});
 
 	it('should return a normalized geocoding address and add its value to cache', async () => {
