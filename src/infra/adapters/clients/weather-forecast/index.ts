@@ -5,19 +5,26 @@ import {
 	type CommonClientAdapterOptions,
 } from '../client-adapter';
 
-import { type IWeatherClient } from '@/core/ports/clients/weather';
+import { type IWeatherForecastClient } from '@/core/ports/clients/weather-forecast';
 import { type Coordinates, type NormalizedWeatherForecast } from '@/core/types';
 
 import { HttpClient, type IHttpClient } from '@/shared/utils/http-client';
 
-type WeatherClientOptions = CommonClientAdapterOptions & {
+type WeatherForecastClientOptions = CommonClientAdapterOptions & {
 	httpClient?: IHttpClient;
 };
 
-export class WeatherClient extends ClientAdapter implements IWeatherClient {
+export class WeatherForecastClient
+	extends ClientAdapter
+	implements IWeatherForecastClient
+{
 	static readonly #TTL_THREE_HOURS_IN_SECONDS = 10_800;
 
-	constructor({ apiKey, cacheProvider, httpClient }: WeatherClientOptions) {
+	constructor({
+		apiKey,
+		cacheProvider,
+		httpClient,
+	}: WeatherForecastClientOptions) {
 		super({
 			apiKey,
 			cacheProvider,
@@ -55,7 +62,8 @@ export class WeatherClient extends ClientAdapter implements IWeatherClient {
 
 		await this._setDataInCache<NormalizedWeatherForecast>({
 			key: weatherForecastCacheKey,
-			ttlInSeconds: WeatherClient.#TTL_THREE_HOURS_IN_SECONDS.toString(),
+			ttlInSeconds:
+				WeatherForecastClient.#TTL_THREE_HOURS_IN_SECONDS.toString(),
 			value: normalizedWeatherForecast,
 		});
 
