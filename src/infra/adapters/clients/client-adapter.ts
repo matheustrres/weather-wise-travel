@@ -2,10 +2,13 @@ import { type ICacheProvider } from '@/core/ports/providers/cache';
 
 import { type IHttpClient } from '@/shared/utils/http-client';
 
-type ClientAdapterOptions = {
+export type CommonClientAdapterOptions = {
 	apiKey: string;
-	httpClient: IHttpClient;
 	cacheProvider: ICacheProvider;
+};
+
+type ClientAdapterOptions = CommonClientAdapterOptions & {
+	httpClient: IHttpClient;
 };
 
 type SetDataInCacheOptions<T> = {

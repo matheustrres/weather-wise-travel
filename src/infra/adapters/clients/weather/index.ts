@@ -1,22 +1,19 @@
 import { type WeatherForecast } from './types';
 
-import { ClientAdapter } from '../client-adapter';
+import {
+	ClientAdapter,
+	type CommonClientAdapterOptions,
+} from '../client-adapter';
 
 import { type IWeatherClient } from '@/core/ports/clients/weather';
-import { type ICacheProvider } from '@/core/ports/providers/cache';
 import { type Coordinates, type NormalizedWeatherForecast } from '@/core/types';
 
 import { HttpClient } from '@/shared/utils/http-client';
 
-type WeatherClientOptions = {
-	apiKey: string;
-	cacheProvider: ICacheProvider;
-};
-
 export class WeatherClient extends ClientAdapter implements IWeatherClient {
 	static readonly #TTL_THREE_HOURS_IN_SECONDS = 10_800;
 
-	constructor({ apiKey, cacheProvider }: WeatherClientOptions) {
+	constructor({ apiKey, cacheProvider }: CommonClientAdapterOptions) {
 		const httpClient = new HttpClient(
 			'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services',
 		);
@@ -30,7 +27,7 @@ export class WeatherClient extends ClientAdapter implements IWeatherClient {
 
 	async getWeatherForecastByCoordinates(
 		coordinates: Coordinates,
-	): Promise<NormalizedWeatherForecast> {
+	): Promise<NormalizedWeatherForecast | null> {
 		const weatherForecastCacheKey =
 			this.#getWeatherForecastCacheKey(coordinates);
 
@@ -46,6 +43,8 @@ export class WeatherClient extends ClientAdapter implements IWeatherClient {
 		const weatherForecast = await this._fetchDataFromAPI<WeatherForecast>(
 			this.#getEndpoint(coordinates),
 		);
+
+		if (!weatherForecast) return null;
 
 		const normalizedWeatherForecast =
 			this.#normalizeWeatherForecast(weatherForecast);
