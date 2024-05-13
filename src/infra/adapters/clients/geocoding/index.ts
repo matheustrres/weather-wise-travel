@@ -43,7 +43,7 @@ export class GeocodingClient extends ClientAdapter implements IGeocodingClient {
 		const geocodingAddresses =
 			await this._fetchDataFromAPI<GeocodingAddress[]>(endpoint);
 
-		if (!geocodingAddresses.length) return null;
+		if (!geocodingAddresses?.length) return null;
 
 		const normalizedGeocodingAddress = this.#normalizeGeocodingAddress(
 			geocodingAddresses[0]!,
