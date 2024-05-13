@@ -33,7 +33,7 @@ export class WeatherClient extends ClientAdapter implements IWeatherClient {
 		coordinates: Coordinates,
 	): Promise<NormalizedWeatherForecast | null> {
 		const weatherForecastCacheKey =
-			this.#getWeatherForecastCacheKey(coordinates);
+			this.getWeatherForecastCacheKey(coordinates);
 
 		const normalizedCachedWeatherForecast =
 			await this._fetchDataFromCache<NormalizedWeatherForecast>(
@@ -53,7 +53,7 @@ export class WeatherClient extends ClientAdapter implements IWeatherClient {
 		const normalizedWeatherForecast =
 			this.#normalizeWeatherForecast(weatherForecast);
 
-		await this._setDataInCache({
+		await this._setDataInCache<NormalizedWeatherForecast>({
 			key: weatherForecastCacheKey,
 			ttlInSeconds: WeatherClient.#TTL_THREE_HOURS_IN_SECONDS.toString(),
 			value: normalizedWeatherForecast,
@@ -66,7 +66,7 @@ export class WeatherClient extends ClientAdapter implements IWeatherClient {
 		return `timeline/${lat},${lng}?key=${this._apiKey}`;
 	}
 
-	#getWeatherForecastCacheKey({ lat, lng }: Coordinates): string {
+	getWeatherForecastCacheKey({ lat, lng }: Coordinates): string {
 		return `forecast/${lat}-${lng}`;
 	}
 

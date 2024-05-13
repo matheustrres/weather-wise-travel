@@ -23,5 +23,5 @@ import { IORedisCacheProvider } from './infra/adapters/providers/cache';
 		coordinates!,
 	);
 
-	console.log({ weatherForecast });
+	console.log(JSON.stringify(weatherForecast));
 })();
