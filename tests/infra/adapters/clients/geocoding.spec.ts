@@ -39,6 +39,7 @@ describe('GeocodingClient', () => {
 
 	afterEach(() => {
 		httpClient.get.mock.resetCalls();
+		cacheProvider.flush();
 	});
 
 	it('should return a normalized cached geocoding address', async () => {

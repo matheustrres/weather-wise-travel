@@ -39,6 +39,7 @@ describe('WeatherClient', () => {
 
 	afterEach(() => {
 		httpClient.get.mock.resetCalls();
+		cacheProvider.flush();
 	});
 
 	it('should return a normalized cached weather forecast', async () => {
@@ -61,5 +62,17 @@ describe('WeatherClient', () => {
 
 		deepStrictEqual(weatherForecast, normalizedCachedWeatherForecast);
 		strictEqual(httpClient.get.mock.callCount(), 0);
+	});
+
+	it('should return null if no weather forecast is found for given coordinates', async () => {
+		httpClient.get.mock.mockImplementationOnce(() => null);
+
+		const weatherForecast = await sut.getWeatherForecastByCoordinates({
+			lat: -22.8833282,
+			lng: -47.1964317225214,
+		});
+
+		deepStrictEqual(weatherForecast, null);
+		strictEqual(httpClient.get.mock.callCount(), 1);
 	});
 });
