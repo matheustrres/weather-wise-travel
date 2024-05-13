@@ -75,7 +75,6 @@ export class GeocodingClient extends ClientAdapter implements IGeocodingClient {
 	}
 
 	#normalizeGeocodingAddress(geocodingAddress: GeocodingAddress): Coordinates {
-		console.log({ geocodingAddress });
 		return {
 			lat: Number(geocodingAddress.lat),
 			lng: Number(geocodingAddress.lon),
