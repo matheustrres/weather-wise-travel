@@ -1,5 +1,5 @@
 import { deepStrictEqual, strictEqual } from 'node:assert';
-import { describe, it } from 'node:test';
+import { afterEach, describe, it } from 'node:test';
 
 import { type ICacheProvider } from '@/core/ports/providers/cache';
 import { type Coordinates } from '@/core/types';
@@ -35,9 +35,13 @@ function makeSUT(): SUT {
 }
 
 describe('GeocodingClient', () => {
-	it('should return a normalized cached geocoding address', async () => {
-		const { cacheProvider, httpClient, sut } = makeSUT();
+	const { cacheProvider, httpClient, sut } = makeSUT();
 
+	afterEach(() => {
+		httpClient.get.mock.resetCalls();
+	});
+
+	it('should return a normalized cached geocoding address', async () => {
 		const address = 'Park Shopping';
 		const cacheKey = sut.getGeocodingAddressCacheKey(address);
 
@@ -62,19 +66,16 @@ describe('GeocodingClient', () => {
 	});
 
 	it('should return null if no geocoding address is found for given address', async () => {
-		const { httpClient, sut } = makeSUT();
-
 		httpClient.get.mock.mockImplementationOnce(() => null);
 
 		const geocodingAddress =
 			await sut.forwardGeocodingAddress('Général Leclerc');
 
 		deepStrictEqual(geocodingAddress, null);
+		strictEqual(httpClient.get.mock.callCount(), 1);
 	});
 
 	it('should return a normalized geocoding address and add its value to cache', async () => {
-		const { cacheProvider, httpClient, sut } = makeSUT();
-
 		httpClient.get.mock.mockImplementationOnce(
 			() => geocodingAddressesResponseFixture,
 		);
@@ -93,5 +94,10 @@ describe('GeocodingClient', () => {
 			lng: Number(geocodingAddressesResponseFixture[0]!.lon),
 		});
 		deepStrictEqual(cachedData, normalizedGeocodingAddress);
+		strictEqual(httpClient.get.mock.callCount(), 1);
+		deepStrictEqual(
+			httpClient.get.mock.calls[0]!.result,
+			geocodingAddressesResponseFixture,
+		);
 	});
 });
