@@ -3,38 +3,38 @@ import { describe, it } from 'node:test';
 
 import { GetAddressWeatherForecastTimelineUseCase } from '@/appl/use-cases/forecast-timeline';
 
-import normalizedWeatherForecastResponseFixture from '#/data/fixtures/normalized_weather_forecast_response.json';
+import normalizedWeatherForecastTimelineResponseFixture from '#/data/fixtures/normalized_weather_forecast_timeline_response.json';
+import {
+	type MockedWeatherForecastTimelineClient,
+	mockedWeatherForecastTimelineClient,
+} from '#/data/mocks/forecast-timeline-client';
 import {
 	type MockedGeocodingClient,
 	mockedGeocodingClient,
 } from '#/data/mocks/geocoding-client';
-import {
-	type MockedWeatherForecastClient,
-	mockedWeatherForecastClient,
-} from '#/data/mocks/weather-forecast-client';
 
 type SUT = {
 	geocodingClient: MockedGeocodingClient;
-	weatherForecastClient: MockedWeatherForecastClient;
+	weatherForecastTimelineClient: MockedWeatherForecastTimelineClient;
 	sut: GetAddressWeatherForecastTimelineUseCase;
 };
 
 function makeSUT(): SUT {
 	const geocodingClient = mockedGeocodingClient;
-	const weatherForecastClient = mockedWeatherForecastClient;
+	const weatherForecastTimelineClient = mockedWeatherForecastTimelineClient;
 
 	return {
 		geocodingClient,
-		weatherForecastClient,
+		weatherForecastTimelineClient,
 		sut: new GetAddressWeatherForecastTimelineUseCase(
 			geocodingClient,
-			weatherForecastClient,
+			weatherForecastTimelineClient,
 		),
 	};
 }
 
 describe('GetAddressWeatherForecastTimeline use case', () => {
-	const { geocodingClient, sut, weatherForecastClient } = makeSUT();
+	const { geocodingClient, sut, weatherForecastTimelineClient } = makeSUT();
 
 	it('should throw if no geocoding address if found for given address', () => {
 		geocodingClient.forwardGeocodingAddress.mock.mockImplementationOnce(
@@ -50,13 +50,13 @@ describe('GetAddressWeatherForecastTimeline use case', () => {
 		);
 	});
 
-	it('should throw if no forecast is found through coordinates from given address', () => {
+	it('should throw if no forecast timeline is found through coordinates from given address', () => {
 		geocodingClient.forwardGeocodingAddress.mock.mockImplementationOnce(() => ({
 			lat: -12.5515039,
 			lng: -55.72023595614893,
 		}));
 
-		weatherForecastClient.getWeatherForecastByCoordinates.mock.mockImplementationOnce(
+		weatherForecastTimelineClient.getWeatherForecastTimelineByCoordinates.mock.mockImplementationOnce(
 			() => null,
 		);
 
@@ -65,22 +65,22 @@ describe('GetAddressWeatherForecastTimeline use case', () => {
 				sut.exec({
 					address: 'Random address',
 				}),
-			new Error('No forecast found for given address coordinates.'),
+			new Error('No forecast timeline were found for given address.'),
 		);
 	});
 
-	it('should get a weather forecast for a given address', async () => {
+	it('should get a weather forecast timeline for a given address', async () => {
 		geocodingClient.forwardGeocodingAddress.mock.mockImplementationOnce(() => ({
 			lat: -12.5515039,
 			lng: -55.72023595614893,
 		}));
 
-		weatherForecastClient.getWeatherForecastByCoordinates.mock.mockImplementationOnce(
-			() => normalizedWeatherForecastResponseFixture,
+		weatherForecastTimelineClient.getWeatherForecastTimelineByCoordinates.mock.mockImplementationOnce(
+			() => normalizedWeatherForecastTimelineResponseFixture,
 		);
 
-		const { forecast } = await sut.exec({ address: 'Rue Saint-Rustique' });
+		const { timeline } = await sut.exec({ address: 'Rue Saint-Rustique' });
 
-		deepStrictEqual(forecast, normalizedWeatherForecastResponseFixture);
+		deepStrictEqual(timeline, normalizedWeatherForecastTimelineResponseFixture);
 	});
 });

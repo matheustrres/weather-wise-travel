@@ -2,12 +2,15 @@ import { deepStrictEqual, strictEqual } from 'node:assert';
 import { afterEach, describe, it } from 'node:test';
 
 import { type ICacheProvider } from '@/core/ports/providers/cache';
-import { type Coordinates, type NormalizedWeatherForecast } from '@/core/types';
+import {
+	type Coordinates,
+	type NormalizedWeatherForecastTimeline,
+} from '@/core/types';
 
-import { WeatherForecastClient } from '@/infra/adapters/clients/weather-forecast';
+import { WeatherForecastTimelineClient } from '@/infra/adapters/clients/weather-forecast';
 
-import normalizedWeatherForecastResponseFixture from '#/data/fixtures/normalized_weather_forecast_response.json';
-import weatherForecastResponseFixture from '#/data/fixtures/weather_forecast_response.json';
+import normalizedWeatherForecastTimelineResponseFixture from '#/data/fixtures/normalized_weather_forecast_timeline_response.json';
+import weatherForecastTimelineResponseFixture from '#/data/fixtures/weather_forecast_timeline_response.json';
 import {
 	mockedHttpClient,
 	type MockedHttpClient,
@@ -17,7 +20,7 @@ import { makeInMemoCacheProvider } from '#/impl/in-memo/providers/cache';
 type SUT = {
 	cacheProvider: ICacheProvider;
 	httpClient: MockedHttpClient;
-	sut: WeatherForecastClient;
+	sut: WeatherForecastTimelineClient;
 };
 
 function makeSUT(): SUT {
@@ -27,7 +30,7 @@ function makeSUT(): SUT {
 	return {
 		cacheProvider,
 		httpClient,
-		sut: new WeatherForecastClient({
+		sut: new WeatherForecastTimelineClient({
 			apiKey: 'random_api_key',
 			cacheProvider,
 			httpClient,
@@ -35,7 +38,7 @@ function makeSUT(): SUT {
 	};
 }
 
-describe('WeatherForecastClient', () => {
+describe('WeatherForecastTimelineClient', () => {
 	const { cacheProvider, httpClient, sut } = makeSUT();
 
 	afterEach(() => {
@@ -43,7 +46,7 @@ describe('WeatherForecastClient', () => {
 		cacheProvider.flush();
 	});
 
-	it('should return a normalized cached weather forecast', async () => {
+	it('should return a normalized cached weather forecast timeline', async () => {
 		const coordinates: Coordinates = {
 			lat: -22.8833282,
 			lng: -47.1964317225214,
@@ -51,37 +54,37 @@ describe('WeatherForecastClient', () => {
 
 		const cacheKey = sut.getWeatherForecastCacheKey(coordinates);
 
-		await cacheProvider.set<NormalizedWeatherForecast>({
+		await cacheProvider.set<NormalizedWeatherForecastTimeline>({
 			key: cacheKey,
 			value:
-				normalizedWeatherForecastResponseFixture as NormalizedWeatherForecast,
+				normalizedWeatherForecastTimelineResponseFixture as NormalizedWeatherForecastTimeline,
 		});
 
-		const weatherForecast =
-			await sut.getWeatherForecastByCoordinates(coordinates);
+		const forecastTimeline =
+			await sut.getWeatherForecastTimelineByCoordinates(coordinates);
 
-		const normalizedCachedWeatherForecast = await cacheProvider.get(cacheKey);
+		const cachedForecastTimeline = await cacheProvider.get(cacheKey);
 
-		deepStrictEqual(weatherForecast, normalizedCachedWeatherForecast);
+		deepStrictEqual(forecastTimeline, cachedForecastTimeline);
 		strictEqual(httpClient.get.mock.callCount(), 0);
 	});
 
-	it('should return null if no weather forecast is found for given coordinates', async () => {
+	it('should return null if no weather forecast timeline is found for given coordinates', async () => {
 		httpClient.get.mock.mockImplementationOnce(() => null);
 
-		const weatherForecast = await sut.getWeatherForecastByCoordinates({
+		const forecastTimeline = await sut.getWeatherForecastTimelineByCoordinates({
 			lat: -22.8833282,
 			lng: -47.1964317225214,
 		});
 
-		deepStrictEqual(weatherForecast, null);
+		deepStrictEqual(forecastTimeline, null);
 		strictEqual(httpClient.get.mock.callCount(), 1);
 		deepStrictEqual(httpClient.get.mock.calls[0]!.result, null);
 	});
 
-	it('should return a normalized weather forecast and add its value to cache', async () => {
+	it('should return a normalized weather forecast timeline and add its value to cache', async () => {
 		httpClient.get.mock.mockImplementationOnce(
-			() => weatherForecastResponseFixture,
+			() => weatherForecastTimelineResponseFixture,
 		);
 
 		const coordinates: Coordinates = {
@@ -89,18 +92,18 @@ describe('WeatherForecastClient', () => {
 			lng: -47.1964317225214,
 		};
 
-		const normalizedWeatherForecast =
-			await sut.getWeatherForecastByCoordinates(coordinates);
+		const forecastTimeline =
+			await sut.getWeatherForecastTimelineByCoordinates(coordinates);
 
 		const cachedData = await cacheProvider.get(
 			sut.getWeatherForecastCacheKey(coordinates),
 		);
 
 		deepStrictEqual(
-			normalizedWeatherForecast,
-			normalizedWeatherForecastResponseFixture,
+			forecastTimeline,
+			normalizedWeatherForecastTimelineResponseFixture,
 		);
-		deepStrictEqual(cachedData, normalizedWeatherForecast);
+		deepStrictEqual(cachedData, forecastTimeline);
 		strictEqual(httpClient.get.mock.callCount(), 1);
 	});
 });

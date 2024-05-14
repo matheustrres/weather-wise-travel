@@ -1,9 +1,9 @@
-import { WeatherForecastClient } from '@/infra/adapters/clients/weather-forecast';
+import { WeatherForecastTimelineClient } from '@/infra/adapters/clients/weather-forecast';
 
 import { makeNodeCacheProvider } from '@/main/factories/providers/cache';
 
-export function makeWeatherForecastClient() {
-	return new WeatherForecastClient({
+export function makeWeatherForecastTimelineClient() {
+	return new WeatherForecastTimelineClient({
 		apiKey: process.env['VISUAL_CROSSING_API_KEY'] as string,
 		cacheProvider: makeNodeCacheProvider(),
 	});

@@ -1,7 +1,10 @@
-import { type Coordinates, type NormalizedWeatherForecast } from '@/core/types';
+import {
+	type Coordinates,
+	type NormalizedWeatherForecastTimeline,
+} from '@/core/types';
 
-export interface IWeatherForecastClient {
-	getWeatherForecastByCoordinates(
+export interface IWeatherForecastTimelineClient {
+	getWeatherForecastTimelineByCoordinates(
 		coordinates: Coordinates,
-	): Promise<NormalizedWeatherForecast | null>;
+	): Promise<NormalizedWeatherForecastTimeline | null>;
 }

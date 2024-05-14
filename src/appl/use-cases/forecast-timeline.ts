@@ -1,14 +1,14 @@
 import { type UseCase } from '@/core/contracts/use-case';
 import { type IGeocodingClient } from '@/core/ports/clients/geocoding';
-import { type IWeatherForecastClient } from '@/core/ports/clients/weather-forecast';
-import { type NormalizedWeatherForecast } from '@/core/types';
+import { type IWeatherForecastTimelineClient } from '@/core/ports/clients/weather-forecast';
+import { type NormalizedWeatherForecastTimeline } from '@/core/types';
 
 type GetAddressWeatherForecastTimelineUseCaseInput = {
 	address: string;
 };
 
 type GetAddressWeatherForecastTimelineUseCaseOutput = {
-	forecast: NormalizedWeatherForecast;
+	timeline: NormalizedWeatherForecastTimeline;
 };
 
 export class GetAddressWeatherForecastTimelineUseCase
@@ -20,7 +20,7 @@ export class GetAddressWeatherForecastTimelineUseCase
 {
 	constructor(
 		private readonly geocodingClient: IGeocodingClient,
-		private readonly weatherForecastClient: IWeatherForecastClient,
+		private readonly weatherForecastTimelineClient: IWeatherForecastTimelineClient,
 	) {}
 
 	async exec({
@@ -33,17 +33,17 @@ export class GetAddressWeatherForecastTimelineUseCase
 			throw new Error('An invalid address were provided.');
 		}
 
-		const forecast =
-			await this.weatherForecastClient.getWeatherForecastByCoordinates(
+		const timeline =
+			await this.weatherForecastTimelineClient.getWeatherForecastTimelineByCoordinates(
 				geocodingAddress,
 			);
 
-		if (!forecast) {
-			throw new Error('No forecast found for given address coordinates.');
+		if (!timeline) {
+			throw new Error('No forecast timeline were found for given address.');
 		}
 
 		return {
-			forecast,
+			timeline,
 		};
 	}
 }

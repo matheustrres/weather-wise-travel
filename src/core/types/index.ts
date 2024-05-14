@@ -3,7 +3,7 @@ export type Coordinates = {
 	lng: number;
 };
 
-export type NormalizedWeatherForecast = {
+export type NormalizedWeatherForecastTimeline = {
 	lat: number;
 	lng: number;
 	timezone: string;

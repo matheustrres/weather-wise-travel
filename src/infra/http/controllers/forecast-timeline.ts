@@ -25,9 +25,9 @@ export class GetAddressWeatherForecastTimelineController extends Controller {
 	handle = async (req: Request, res: Response): Promise<Response> => {
 		const address = req.query['address'] as string;
 
-		const { forecast } =
+		const { timeline } =
 			await this.getAddressWeatherForecastTimelineUseCase.exec({ address });
 
-		return res.status(200).json(forecast);
+		return res.status(200).json(timeline);
 	};
 }
