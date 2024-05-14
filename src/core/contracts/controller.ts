@@ -4,11 +4,11 @@ export abstract class Controller {
 	abstract readonly prefix: string;
 	readonly router: Router;
 
-	constructor() {
+	protected constructor() {
 		this.router = Router();
 	}
 
-	abstract handle(req: Request, res: Response): Promise<Response>;
+	protected abstract handle(req: Request, res: Response): Promise<Response>;
 
-	abstract initRoutes(): void;
+	protected abstract initRoutes(): void;
 }
