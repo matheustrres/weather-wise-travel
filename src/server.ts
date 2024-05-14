@@ -1,3 +1,5 @@
+import './shared/utils/alias';
+
 import http from 'node:http';
 
 import { App } from './app';
