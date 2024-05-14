@@ -28,8 +28,10 @@
 					"index",
 					"sibling",
 					"parent",
+					"/^@/appl/",
 					"/^@/core/",
 					"/^@/infra/",
+					"/^@/main/",
 					"/^@/shared/",
 					"/^#/"
 				],

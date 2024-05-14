@@ -3,7 +3,7 @@
 	"author": "Matheus Torres <matheustrres.rj@gmail.com>",
 	"description": "Easy-to-use tool for obtaining weather forecasts for up to 15 days to make it easier to plan appointments based on the weather",
 	"version": "1.0.0",
-	"main": "./dist/index.js",
+	"main": "./dist/server.js",
 	"license": "Apache-2.0",
 	"engines": {
 		"node": ">=20.x",
@@ -17,7 +17,7 @@
 		"format": "prettier --write \"{src,tests}/**/*.ts\"",
 		"lint": "eslint \"{src,tests}/**/*.ts\" --fix",
 		"start": "node --env-file=.env .",
-		"start:dev": "tsx --env-file=.dev.env --watch src/index.ts",
+		"start:dev": "tsx --env-file=.dev.env --watch src/server.ts",
 		"test": "glob -c \"node --import tsx --no-warnings --test\" \"./tests/**/*.{spec,test}.ts\"",
 		"prepare": "husky install"
 	},

@@ -1,20 +1,16 @@
 import express from 'express';
 
-import { Controller } from './core/contracts/controller';
-import { Logger } from './shared/utils/logger';
+import { Controller } from '@/core/contracts/controller';
 
 type AppOptions = {
 	controllers: Controller[];
-	port: number;
 	middlewares?: any[];
 };
 
 export class App {
 	#app!: express.Application;
-	#port!: number;
-	#logger: Logger;
 
-	static validate({ controllers, port }: AppOptions) {
+	static validate({ controllers }: AppOptions) {
 		if (!controllers.length || !Array.isArray(controllers)) {
 			throw new TypeError('Argument {controllers} must be an array.');
 		}
@@ -24,23 +20,16 @@ export class App {
 		) {
 			throw new TypeError('Argument {controller} must be a Controller.');
 		}
-
-		if (!port || typeof port !== 'number') {
-			throw new TypeError('Argument {port} is required and must be a number.');
-		}
 	}
 
 	constructor(options: AppOptions) {
 		App.validate(options);
 
 		this.#initApp(options);
-
-		this.#logger = new Logger('App');
 	}
 
-	#initApp({ controllers, port }: AppOptions) {
+	#initApp({ controllers }: AppOptions) {
 		this.#app = express();
-		this.#port = port;
 
 		this.#initMiddlewares();
 		this.#initControllers(controllers);
@@ -56,9 +45,7 @@ export class App {
 		});
 	}
 
-	listen() {
-		this.#app.listen(this.#port, () => {
-			this.#logger.info(`App listening on port [${this.#port}].`);
-		});
+	getInstance() {
+		return this.#app;
 	}
 }
