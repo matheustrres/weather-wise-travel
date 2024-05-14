@@ -4,7 +4,7 @@ import http from 'node:http';
 
 import { App } from './app';
 
-import { makeWeatherForecastController } from '@/main/factories/controllers/weather-forecast';
+import { makeGetAddressWeatherForecastTimelineController } from '@/main/factories/controllers/forecast-timeline';
 
 import { Logger } from '@/shared/utils/logger';
 
@@ -12,7 +12,7 @@ const logger = new Logger('Server');
 
 (() => {
 	const app = new App({
-		controllers: [makeWeatherForecastController()],
+		controllers: [makeGetAddressWeatherForecastTimelineController()],
 	});
 
 	const httpServer = http.createServer(app.getInstance());

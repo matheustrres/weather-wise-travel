@@ -3,16 +3,20 @@ import { type IGeocodingClient } from '@/core/ports/clients/geocoding';
 import { type IWeatherForecastClient } from '@/core/ports/clients/weather-forecast';
 import { type NormalizedWeatherForecast } from '@/core/types';
 
-type WeatherForecastUseCaseInput = {
+type GetAddressWeatherForecastTimelineUseCaseInput = {
 	address: string;
 };
 
-type WeatherForecastUseCaseOutput = {
+type GetAddressWeatherForecastTimelineUseCaseOutput = {
 	forecast: NormalizedWeatherForecast;
 };
 
-export class WeatherForecastUseCase
-	implements UseCase<WeatherForecastUseCaseInput, WeatherForecastUseCaseOutput>
+export class GetAddressWeatherForecastTimelineUseCase
+	implements
+		UseCase<
+			GetAddressWeatherForecastTimelineUseCaseInput,
+			GetAddressWeatherForecastTimelineUseCaseOutput
+		>
 {
 	constructor(
 		private readonly geocodingClient: IGeocodingClient,
@@ -21,7 +25,7 @@ export class WeatherForecastUseCase
 
 	async exec({
 		address,
-	}: WeatherForecastUseCaseInput): Promise<WeatherForecastUseCaseOutput> {
+	}: GetAddressWeatherForecastTimelineUseCaseInput): Promise<GetAddressWeatherForecastTimelineUseCaseOutput> {
 		const geocodingAddress =
 			await this.geocodingClient.forwardGeocodingAddress(address);
 

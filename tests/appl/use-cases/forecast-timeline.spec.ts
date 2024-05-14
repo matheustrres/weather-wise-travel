@@ -1,7 +1,7 @@
 import { deepStrictEqual, rejects } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { WeatherForecastUseCase } from '@/appl/use-cases/weather-forecast';
+import { GetAddressWeatherForecastTimelineUseCase } from '@/appl/use-cases/forecast-timeline';
 
 import normalizedWeatherForecastResponseFixture from '#/data/fixtures/normalized_weather_forecast_response.json';
 import {
@@ -16,7 +16,7 @@ import {
 type SUT = {
 	geocodingClient: MockedGeocodingClient;
 	weatherForecastClient: MockedWeatherForecastClient;
-	sut: WeatherForecastUseCase;
+	sut: GetAddressWeatherForecastTimelineUseCase;
 };
 
 function makeSUT(): SUT {
@@ -26,11 +26,14 @@ function makeSUT(): SUT {
 	return {
 		geocodingClient,
 		weatherForecastClient,
-		sut: new WeatherForecastUseCase(geocodingClient, weatherForecastClient),
+		sut: new GetAddressWeatherForecastTimelineUseCase(
+			geocodingClient,
+			weatherForecastClient,
+		),
 	};
 }
 
-describe('WeatherForecast use case', () => {
+describe('GetAddressWeatherForecastTimeline use case', () => {
 	const { geocodingClient, sut, weatherForecastClient } = makeSUT();
 
 	it('should throw if no geocoding address if found for given address', () => {

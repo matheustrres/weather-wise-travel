@@ -1,13 +1,15 @@
 import { type Request, type Response } from 'express';
 
-import { type WeatherForecastUseCase } from '@/appl/use-cases/weather-forecast';
+import { type GetAddressWeatherForecastTimelineUseCase } from '@/appl/use-cases/forecast-timeline';
 
 import { Controller } from '@/core/contracts/controller';
 
-export class WeatherForecastController extends Controller {
-	prefix = '/forecast';
+export class GetAddressWeatherForecastTimelineController extends Controller {
+	prefix = '/forecast/timeline';
 
-	constructor(private readonly weatherForecastUseCase: WeatherForecastUseCase) {
+	constructor(
+		private readonly getAddressWeatherForecastTimelineUseCase: GetAddressWeatherForecastTimelineUseCase,
+	) {
 		super();
 
 		this.initRoutes();
@@ -23,7 +25,8 @@ export class WeatherForecastController extends Controller {
 	handle = async (req: Request, res: Response): Promise<Response> => {
 		const address = req.query['address'] as string;
 
-		const { forecast } = await this.weatherForecastUseCase.exec({ address });
+		const { forecast } =
+			await this.getAddressWeatherForecastTimelineUseCase.exec({ address });
 
 		return res.status(200).json(forecast);
 	};
