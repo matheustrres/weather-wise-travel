@@ -21,7 +21,7 @@ export class WeatherForecastController extends Controller {
 	 * Using arrow functions to avoid having to bind the lexical context (this)
 	 */
 	handle = async (req: Request, res: Response): Promise<Response> => {
-		const address = req.params['address'] as string;
+		const address = req.query['address'] as string;
 
 		const { forecast } = await this.weatherForecastUseCase.exec({ address });
 
