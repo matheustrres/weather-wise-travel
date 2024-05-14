@@ -1,8 +1,9 @@
-import { rejects } from 'node:assert';
+import { deepStrictEqual, rejects } from 'node:assert';
 import { describe, it } from 'node:test';
 
 import { WeatherForecastUseCase } from '@/appl/use-cases/weather-forecast';
 
+import normalizedWeatherForecastResponseFixture from '#/data/fixtures/normalized_weather_forecast_response.json';
 import {
 	type MockedGeocodingClient,
 	mockedGeocodingClient,
@@ -63,5 +64,20 @@ describe('WeatherForecast use case', () => {
 				}),
 			new Error('No forecast found for given address coordinates.'),
 		);
+	});
+
+	it('should get a weather forecast for a given address', async () => {
+		geocodingClient.forwardGeocodingAddress.mock.mockImplementationOnce(() => ({
+			lat: -12.5515039,
+			lng: -55.72023595614893,
+		}));
+
+		weatherForecastClient.getWeatherForecastByCoordinates.mock.mockImplementationOnce(
+			() => normalizedWeatherForecastResponseFixture,
+		);
+
+		const { forecast } = await sut.exec({ address: 'Rue Saint-Rustique' });
+
+		deepStrictEqual(forecast, normalizedWeatherForecastResponseFixture);
 	});
 });
