@@ -51,8 +51,7 @@ export class GeocodingClient extends ClientAdapter implements IGeocodingClient {
 
 		await this._setDataInCache<Coordinates>({
 			key: geocodingAddressCacheKey,
-			ttlInSeconds:
-				GeocodingClient.#TTL_SEVENTY_TWO_HOURS_IN_SECONDS.toString(),
+			ttlInSeconds: GeocodingClient.#TTL_SEVENTY_TWO_HOURS_IN_SECONDS,
 			value: normalizedGeocodingAddress,
 		});
 

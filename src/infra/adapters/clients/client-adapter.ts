@@ -13,7 +13,7 @@ type ClientAdapterOptions = CommonClientAdapterOptions & {
 
 type SetDataInCacheOptions<T> = {
 	key: string;
-	ttlInSeconds: string;
+	ttlInSeconds: number;
 	value: T;
 };
 

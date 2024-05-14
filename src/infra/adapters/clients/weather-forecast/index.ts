@@ -62,8 +62,7 @@ export class WeatherForecastClient
 
 		await this._setDataInCache<NormalizedWeatherForecast>({
 			key: weatherForecastCacheKey,
-			ttlInSeconds:
-				WeatherForecastClient.#TTL_THREE_HOURS_IN_SECONDS.toString(),
+			ttlInSeconds: WeatherForecastClient.#TTL_THREE_HOURS_IN_SECONDS,
 			value: normalizedWeatherForecast,
 		});
 

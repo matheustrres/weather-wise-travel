@@ -1,23 +1,29 @@
-import IORedis from 'ioredis';
+import NodeCache from 'node-cache';
 
 import {
 	type CacheSetOptions,
 	type ICacheProvider,
 } from '@/core/ports/providers/cache';
 
-export class IORedisCacheProvider implements ICacheProvider {
-	readonly #redis = new IORedis('redis://localhost:6379/0');
+export class NodeCacheProvider implements ICacheProvider {
+	readonly #cacheManager: NodeCache;
+
+	constructor() {
+		this.#cacheManager = new NodeCache({
+			deleteOnExpire: true,
+		});
+	}
 
 	async del(key: string): Promise<void> {
-		await this.#redis.del(key);
+		this.#cacheManager.del(key);
 	}
 
 	async flush(): Promise<void> {
-		await this.#redis.flushall();
+		this.#cacheManager.flushAll();
 	}
 
 	async get<T>(key: string): Promise<T | null> {
-		const data = await this.#redis.get(key);
+		const data = this.#cacheManager.get<string>(key);
 
 		if (!data) return null;
 
@@ -29,10 +35,10 @@ export class IORedisCacheProvider implements ICacheProvider {
 		value,
 		ttlInSeconds,
 	}: CacheSetOptions<T>): Promise<void> {
-		await this.#redis.set(key, JSON.stringify(value));
+		this.#cacheManager.set(key, JSON.stringify(value));
 
 		if (ttlInSeconds) {
-			await this.#redis.expire(key, ttlInSeconds);
+			this.#cacheManager.ttl(key, ttlInSeconds);
 		}
 	}
 }

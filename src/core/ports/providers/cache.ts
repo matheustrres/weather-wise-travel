@@ -1,7 +1,7 @@
 export type CacheSetOptions<T> = {
 	key: string;
 	value: T;
-	ttlInSeconds?: string;
+	ttlInSeconds?: number;
 };
 
 export interface ICacheProvider {
