@@ -24,7 +24,8 @@
 	"dependencies": {
 		"express": "^4.19.2",
 		"ioredis": "^5.4.1",
-		"module-alias": "^2.2.3"
+		"module-alias": "^2.2.3",
+		"node-cache": "^5.1.2"
 	},
 	"devDependencies": {
 		"@swc/cli": "^0.3.12",
