@@ -3,9 +3,10 @@ import './shared/utils/alias';
 import http from 'node:http';
 
 import { App } from './app';
-import { Logger } from './shared/utils/logger';
 
 import { makeWeatherForecastController } from '@/main/factories/controllers/weather-forecast';
+
+import { Logger } from '@/shared/utils/logger';
 
 const logger = new Logger('Server');
 
