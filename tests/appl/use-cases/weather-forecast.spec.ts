@@ -30,7 +30,7 @@ function makeSUT(): SUT {
 }
 
 describe('WeatherForecast use case', () => {
-	const { geocodingClient, sut } = makeSUT();
+	const { geocodingClient, sut, weatherForecastClient } = makeSUT();
 
 	it('should throw if no geocoding address if found for given address', () => {
 		geocodingClient.forwardGeocodingAddress.mock.mockImplementationOnce(
@@ -43,6 +43,25 @@ describe('WeatherForecast use case', () => {
 					address: 'Invalid address',
 				}),
 			new Error('An invalid address were provided.'),
+		);
+	});
+
+	it('should throw if no forecast is found through coordinates from given address', () => {
+		geocodingClient.forwardGeocodingAddress.mock.mockImplementationOnce(() => ({
+			lat: -12.5515039,
+			lng: -55.72023595614893,
+		}));
+
+		weatherForecastClient.getWeatherForecastByCoordinates.mock.mockImplementationOnce(
+			() => null,
+		);
+
+		rejects(
+			() =>
+				sut.exec({
+					address: 'Invalid address',
+				}),
+			new Error('No forecast found for given address coordinates.'),
 		);
 	});
 });
