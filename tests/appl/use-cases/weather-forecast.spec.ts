@@ -60,7 +60,7 @@ describe('WeatherForecast use case', () => {
 		rejects(
 			() =>
 				sut.exec({
-					address: 'Invalid address',
+					address: 'Random address',
 				}),
 			new Error('No forecast found for given address coordinates.'),
 		);
