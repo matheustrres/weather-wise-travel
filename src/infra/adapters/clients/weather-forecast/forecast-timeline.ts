@@ -1,4 +1,4 @@
-import { type WeatherForecast } from './types';
+import { type WeatherForecastTimeline } from './types';
 
 import {
 	ClientAdapter,
@@ -42,29 +42,30 @@ export class WeatherForecastTimelineClient
 	async getWeatherForecastTimelineByCoordinates(
 		coordinates: Coordinates,
 	): Promise<NormalizedWeatherForecastTimeline | null> {
-		const weatherForecastCacheKey =
-			this.getWeatherForecastCacheKey(coordinates);
+		const weatherForecastTimelineCacheKey =
+			this.getWeatherForecastTimelineCacheKey(coordinates);
 
 		const normalizedCachedWeatherForecastTimeline =
 			await this._fetchDataFromCache<NormalizedWeatherForecastTimeline>(
-				weatherForecastCacheKey,
+				weatherForecastTimelineCacheKey,
 			);
 
 		if (normalizedCachedWeatherForecastTimeline) {
 			return normalizedCachedWeatherForecastTimeline;
 		}
 
-		const weatherForecast = await this._fetchDataFromAPI<WeatherForecast>(
-			this.#getEndpoint(coordinates),
-		);
+		const weatherForecastTimeline =
+			await this._fetchDataFromAPI<WeatherForecastTimeline>(
+				this.#getEndpoint(coordinates),
+			);
 
-		if (!weatherForecast) return null;
+		if (!weatherForecastTimeline) return null;
 
 		const normalizedWeatherForecastTimeline =
-			this.#normalizeWeatherForecast(weatherForecast);
+			this.#normalizeWeatherForecastTimeline(weatherForecastTimeline);
 
 		await this._setDataInCache<NormalizedWeatherForecastTimeline>({
-			key: weatherForecastCacheKey,
+			key: weatherForecastTimelineCacheKey,
 			ttlInSeconds: WeatherForecastTimelineClient.#TTL_THREE_HOURS_IN_SECONDS,
 			value: normalizedWeatherForecastTimeline,
 		});
@@ -76,19 +77,19 @@ export class WeatherForecastTimelineClient
 		return `timeline/${lat},${lng}?key=${this._apiKey}`;
 	}
 
-	getWeatherForecastCacheKey({ lat, lng }: Coordinates): string {
+	getWeatherForecastTimelineCacheKey({ lat, lng }: Coordinates): string {
 		return `forecast/${lat}-${lng}`;
 	}
 
-	#normalizeWeatherForecast(
-		weatherForecast: WeatherForecast,
+	#normalizeWeatherForecastTimeline(
+		weatherForecastTimeline: WeatherForecastTimeline,
 	): NormalizedWeatherForecastTimeline {
 		return {
-			lat: weatherForecast.latitude,
-			lng: weatherForecast.longitude,
-			timezone: weatherForecast.timezone,
-			description: weatherForecast.description,
-			days: weatherForecast.days.map((day) => ({
+			lat: weatherForecastTimeline.latitude,
+			lng: weatherForecastTimeline.longitude,
+			timezone: weatherForecastTimeline.timezone,
+			description: weatherForecastTimeline.description,
+			days: weatherForecastTimeline.days.map((day) => ({
 				dateTime: day.datetime,
 				conditions: day.conditions,
 				description: day.description,

@@ -1,4 +1,4 @@
-export type WeatherForecast = {
+export type WeatherForecastTimeline = {
 	queryCost: number;
 	latitude: number;
 	longitude: number;
@@ -7,13 +7,13 @@ export type WeatherForecast = {
 	timezone: string;
 	tzoffset: number;
 	description: string;
-	days: Day[];
+	days: ForecastTimelineDay[];
 	alerts: any[];
-	stations: Stations;
-	currentConditions: CurrentConditions;
+	stations: ForecastTimelineStations;
+	currentConditions: ForecastTimelineCurrentConditions;
 };
 
-type CurrentConditions = {
+type ForecastTimelineCurrentConditions = {
 	datetime: string;
 	datetimeEpoch: number;
 	temp: number;
@@ -45,16 +45,16 @@ type CurrentConditions = {
 	moonphase: number;
 };
 
-type Stations = {
-	SBRJ: SBRJ;
-	SBJR: SBRJ;
-	SBGL: SBRJ;
-	SBAF: SBRJ;
-	F0496: SBRJ;
-	SBSC: SBRJ;
+type ForecastTimelineStations = {
+	SBRJ: ForecastTimelineSBRJ;
+	SBJR: ForecastTimelineSBRJ;
+	SBGL: ForecastTimelineSBRJ;
+	SBAF: ForecastTimelineSBRJ;
+	F0496: ForecastTimelineSBRJ;
+	SBSC: ForecastTimelineSBRJ;
 };
 
-type SBRJ = {
+type ForecastTimelineSBRJ = {
 	distance: number;
 	latitude: number;
 	longitude: number;
@@ -65,7 +65,7 @@ type SBRJ = {
 	contribution: number;
 };
 
-type Day = {
+type ForecastTimelineDay = {
 	datetime: string;
 	datetimeEpoch: number;
 	tempmax: number;
@@ -102,10 +102,10 @@ type Day = {
 	icon: string;
 	stations?: string[];
 	source: string;
-	hours: Hour[];
+	hours: ForecastTimelineHour[];
 };
 
-type Hour = {
+type ForecastTimelineHour = {
 	datetime: string;
 	datetimeEpoch: number;
 	temp: number;

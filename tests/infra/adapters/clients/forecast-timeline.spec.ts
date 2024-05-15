@@ -52,7 +52,7 @@ describe('WeatherForecastTimelineClient', () => {
 			lng: -47.1964317225214,
 		};
 
-		const cacheKey = sut.getWeatherForecastCacheKey(coordinates);
+		const cacheKey = sut.getWeatherForecastTimelineCacheKey(coordinates);
 
 		await cacheProvider.set<NormalizedWeatherForecastTimeline>({
 			key: cacheKey,
@@ -96,7 +96,7 @@ describe('WeatherForecastTimelineClient', () => {
 			await sut.getWeatherForecastTimelineByCoordinates(coordinates);
 
 		const cachedData = await cacheProvider.get(
-			sut.getWeatherForecastCacheKey(coordinates),
+			sut.getWeatherForecastTimelineCacheKey(coordinates),
 		);
 
 		deepStrictEqual(

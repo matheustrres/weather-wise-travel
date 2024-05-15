@@ -8,17 +8,17 @@ export type NormalizedWeatherForecastTimeline = {
 	lng: number;
 	timezone: string;
 	description: string;
-	days: Day[];
+	days: NormalizedWeatherForecastTimelineDay[];
 };
 
-type Day = {
+type NormalizedWeatherForecastTimelineDay = {
 	dateTime: string;
 	conditions: string;
 	description: string;
 	sunRise: string;
 	sunSet: string;
-	temperature: Temperature;
-	thermalSensation: ThermalSensation;
+	temperature: NormalizedWeatherForecastTimelineTemperature;
+	thermalSensation: NormalizedWeatherForecastTimelineThermalSensation;
 	pressure: number;
 	cloudCover: number;
 	visibility: number;
@@ -27,39 +27,39 @@ type Day = {
 	solarEnergy: number;
 	ultraVioletExposure: number;
 	dewPointTemperature: number;
-	precipitation: Precipitation;
+	precipitation: NormalizedWeatherForecastTimelinePrecipitation;
 	snow: number;
 	snowDepth: number;
-	wind: Wind;
-	hours: Hour[];
+	wind: NormalizedWeatherForecastTimelineWind;
+	hours: NormalizedWeatherForecastTimelineHour[];
 };
 
-type Temperature = {
+type NormalizedWeatherForecastTimelineTemperature = {
 	min: number;
 	max: number;
 	current: number;
 };
 
-type ThermalSensation = {
+type NormalizedWeatherForecastTimelineThermalSensation = {
 	min: number;
 	max: number;
 	current: number;
 };
 
-type Precipitation = {
+type NormalizedWeatherForecastTimelinePrecipitation = {
 	current: number;
 	probability: number;
 	cover: number;
 	types?: string[];
 };
 
-type Wind = {
+type NormalizedWeatherForecastTimelineWind = {
 	speed: number;
 	gust: number;
 	direction: number;
 };
 
-type Hour = {
+type NormalizedWeatherForecastTimelineHour = {
 	dateTime: string;
 	conditions: string;
 	temperature: number;
@@ -72,8 +72,8 @@ type Hour = {
 	solarEnergy: number;
 	ultraVioletExposure: number;
 	dewPointTemperature: number;
-	precipitation: Precipitation;
+	precipitation: NormalizedWeatherForecastTimelinePrecipitation;
 	snow: number;
 	snowDepth: number;
-	wind: Wind;
+	wind: NormalizedWeatherForecastTimelineWind;
 };
