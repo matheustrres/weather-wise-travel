@@ -9,6 +9,7 @@
   • <a href="#environment-variables">Environment variables</a><br>
   • <a href="#running-locally">Running locally</a><br>
   • <a href="#running-tests">Running tests</a><br>
+  • <a href="#documentation">Documentation</a><br>
   • <a href="#used-tools">Used tools</a><br>
   • <a href="#license">License</a>
 </p>
@@ -90,6 +91,18 @@ To run the tests, execute the following command:
 ```bash
 pnpm test
 ```
+
+## Documentation
+
+-  Get the weather forecast for up to 15 days for an address
+
+```http
+  GET /api/v1/forecast/timeline?address=Wall Street
+```
+
+| Parameter   | Type       | Description                           |
+| :---------- | :--------- | :---------------------------------- |
+| `address` | `string` | **Required**. The target address |
 
 ## Used tools
 
